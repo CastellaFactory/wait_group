@@ -13,13 +13,16 @@ use std::thread;
 fn main() {
     let wg = WaitGroup::new();
     for i in 0..100 {
+        // increment the WaitGroup counter
         wg.add(1);
         let wg2 = wg.clone();
         thread::spawn(move || {
             println!("{}", i);
+            // and now decrement the counter
             wg2.done();
         });
     }
+    // wait for all thread have finished
     wg.wait();
 }
 ```
