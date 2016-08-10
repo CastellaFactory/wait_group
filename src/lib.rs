@@ -26,9 +26,7 @@ use std::sync::{Arc, Mutex, Condvar};
 /// wg.wait();
 /// ```
 #[derive(Clone)]
-pub struct WaitGroup {
-    c: Arc<WaitGroupImpl>,
-}
+pub struct WaitGroup(Arc<WaitGroupImpl>);
 
 struct WaitGroupImpl {
     cond: Condvar,
@@ -37,16 +35,14 @@ struct WaitGroupImpl {
 
 impl WaitGroup {
     pub fn new() -> WaitGroup {
-        WaitGroup {
-            c: Arc::new(WaitGroupImpl {
-                cond: Condvar::new(),
-                count: Mutex::new(0),
-            }),
-        }
+        WaitGroup(Arc::new(WaitGroupImpl {
+            cond: Condvar::new(),
+            count: Mutex::new(0),
+        }))
     }
 
     pub fn add(&self, delta: i32) {
-        let mut count = self.c.count.lock().unwrap();
+        let mut count = self.0.count.lock().unwrap();
         *count += delta;
         assert!(*count >= 0);
         self.notify_if_empty(*count);
@@ -57,22 +53,22 @@ impl WaitGroup {
     }
 
     pub fn wait(&self) {
-        let mut count = self.c.count.lock().unwrap();
+        let mut count = self.0.count.lock().unwrap();
         while *count > 0 {
-            count = self.c.cond.wait(count).unwrap();
+            count = self.0.cond.wait(count).unwrap();
         }
     }
 
     fn notify_if_empty(&self, count: i32) {
         if count == 0 {
-            self.c.cond.notify_all();
+            self.0.cond.notify_all();
         }
     }
 }
 
 impl fmt::Debug for WaitGroup {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let count = self.c.count.lock().unwrap();
+        let count = self.0.count.lock().unwrap();
         write!(f, "WaitGroup {{ count {:?} }}", *count)
     }
 }
