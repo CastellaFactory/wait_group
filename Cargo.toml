@@ -1,6 +1,10 @@
 [package]
 name = "wait_group"
-version = "0.1.0"
+version = "0.1.2"
 authors = ["CastellaFactory <castellafactory@gmail.com>"]
+homepage = "https://github.com/CastellaFactory/wait_group"
+repository = "https://github.com/CastellaFactory/wait_group"
+description = "golang sync.WaitGroup in Rust"
+keywords = ["waitgroup", "golang", "thread"]
+license = "MIT"
 
-[dependencies]

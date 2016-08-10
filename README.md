@@ -1,6 +1,6 @@
 # wait\_group
 
-wait\_group manipulates `sync.WaitGroup` in [golang](https://golang.org/pkg/sync/#WaitGroup).
+golang [`sync.WaitGroup`](https://golang.org/pkg/sync/#WaitGroup) in Rust
 
 ## Example
 
