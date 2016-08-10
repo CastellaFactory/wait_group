@@ -1,0 +1,6 @@
+[package]
+name = "wait_group"
+version = "0.1.0"
+authors = ["CastellaFactory <castellafactory@gmail.com>"]
+
+[dependencies]
