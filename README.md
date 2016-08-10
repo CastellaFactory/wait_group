@@ -5,21 +5,23 @@ golang [`sync.WaitGroup`](https://golang.org/pkg/sync/#WaitGroup) in Rust
 ## Example
 
 ```
+extern crate wait_group;
+use wait_group::WaitGroup;
+
 use std::thread;
 
-let wg = wait_group::WaitGroup::new();
-
-for _ in 0..10 {
-    wg.add(1);
-    thread::spawn(move || {
-        // do something
-
-        // call done
-        wg.done();
-    });
+fn main() {
+    let wg = WaitGroup::new();
+    for i in 0..100 {
+        wg.add(1);
+        let wg2 = wg.clone();
+        thread::spawn(move || {
+            println!("{}", i);
+            wg2.done();
+        });
+    }
+    wg.wait();
 }
-// block until all threads have finished
-wg.wait();
 ```
 
 ## License
