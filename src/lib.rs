@@ -30,7 +30,7 @@ pub struct WaitGroup(Arc<WaitGroupImpl>);
 
 struct WaitGroupImpl {
     cond: Condvar,
-    count: Mutex<i32>,
+    count: Mutex<usize>,
 }
 
 impl WaitGroup {
@@ -41,15 +41,17 @@ impl WaitGroup {
         }))
     }
 
-    pub fn add(&self, delta: i32) {
+    pub fn add(&self, delta: usize) {
         let mut count = self.0.count.lock().unwrap();
         *count += delta;
-        assert!(*count >= 0);
         self.notify_if_empty(*count);
     }
 
     pub fn done(&self) {
-        self.add(-1);
+        let mut count = self.0.count.lock().unwrap();
+        assert!(*count > 0);
+        *count -= 1;
+        self.notify_if_empty(*count);
     }
 
     pub fn wait(&self) {
@@ -59,7 +61,7 @@ impl WaitGroup {
         }
     }
 
-    fn notify_if_empty(&self, count: i32) {
+    fn notify_if_empty(&self, count: usize) {
         if count == 0 {
             self.0.cond.notify_all();
         }
@@ -75,6 +77,24 @@ impl fmt::Debug for WaitGroup {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+    use std::thread;
     #[test]
-    fn it_work() {}
+    fn it_work() {
+        let wg = WaitGroup::new();
+        let v = vec![1, 2, 3, 4, 5];
+        wg.add(v.len());
+        for _ in v {
+            let wg = wg.clone();
+            thread::spawn(move || wg.done());
+        }
+        wg.wait();
+    }
+
+    #[test]
+    #[should_panic]
+    fn inner_counter_error() {
+        let wg = WaitGroup::new();
+        wg.done();
+    }
 }
