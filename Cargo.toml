@@ -1,6 +1,6 @@
 [package]
 name = "wait_group"
-version = "0.1.3"
+version = "0.1.4"
 authors = ["CastellaFactory <castellafactory@gmail.com>"]
 homepage = "https://github.com/CastellaFactory/wait_group"
 repository = "https://github.com/CastellaFactory/wait_group"
