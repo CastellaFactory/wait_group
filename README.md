@@ -4,7 +4,7 @@ golang [`sync.WaitGroup`](https://golang.org/pkg/sync/#WaitGroup) in Rust
 
 ## Example
 
-```
+```rust
 extern crate wait_group;
 use wait_group::WaitGroup;
 
